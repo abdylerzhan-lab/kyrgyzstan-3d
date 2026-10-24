@@ -186,8 +186,9 @@ function tab(name) {
       (x.page ? ' · <a href="' + esc(x.page) + '" target="_blank" rel="noopener">Wikimedia Commons</a>' : "") + "</figcaption></figure>").join("") + "</div>"
       : '<div class="empty">Фото и видео скоро появятся.</div>';
   } else {
-    body.innerHTML = '<model-viewer src="' + esc(p.model) + '" camera-controls auto-rotate touch-action="pan-y" camera-orbit="35deg 78deg 62m" field-of-view="30deg" shadow-intensity="1" interaction-prompt="none" alt="3D-модель"></model-viewer>' +
-      '<a class="more" href="' + esc(p.page) + '">Открыть 3D на весь экран: «сейчас» и «каким был» →</a>';
+    body.innerHTML = '<model-viewer src="' + esc(p.model) + '" camera-controls auto-rotate touch-action="pan-y" camera-orbit="' + esc(p.orbit) + '" field-of-view="30deg" shadow-intensity="1" interaction-prompt="none" alt="3D-модель"></model-viewer>' +
+      (p.note3d ? '<div class="region">' + esc(p.note3d) + '</div>' : '') +
+      (p.page ? '<a class="more" href="' + esc(p.page) + '">' + (p.id === 'burana' ? 'Открыть 3D на весь экран: «сейчас» и «каким был» →' : 'Открыть 3D на весь экран →') + '</a>' : '');
   }
 }
 for (const b of document.querySelectorAll(".tabs button")) b.onclick = () => tab(b.dataset.tab);
@@ -199,7 +200,9 @@ for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = (
   const d = await (await fetch("media/places.json")).json();
   const SHORT = {"burana": "Бурана", "kel-suu": "Кель-Суу", "tash-rabat": "Таш-Рабат", "karakol": "Храм Троицы", "sulaiman-too": "Сулайман-Тоо"};
   PLACES = d.places.map(p => Object.assign({short: SHORT[p.id] || p.name_ru}, p,
-    p.id === "burana" ? {model: "burana-now.glb", page: "burana.html"} : {}));
+    p.id === "burana" ? {model: "burana-now.glb", page: "burana.html", orbit: "35deg 78deg 62m"} :
+    p.id === "kel-suu" ? {model: "kel-suu.glb", orbit: "15deg 52deg 19000m", page: "kel-suu.html",
+      note3d: "Макет 14 × 14 км по спутниковым высотам и снимку Sentinel-2. Горы по высоте усилены в 1,3 раза, чтобы лучше читались."} : {}));
   const chips = document.getElementById("chips");
   for (const p of PLACES) {
     pin(p);
