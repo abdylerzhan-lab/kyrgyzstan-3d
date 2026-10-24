@@ -204,7 +204,7 @@ for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = (
   for (const p of PLACES) {
     pin(p);
     const b = document.createElement("button"); b.type = "button";
-    b.innerHTML = esc(p.short) + "<span>" + esc((p.region_ru || "").replace(" область", " обл.")) + "</span>";
+    b.innerHTML = esc(p.short) + "<span>" + esc((p.region_ru || "").split(",")[0].replace(" область", " обл.")) + "</span>";
     b.onclick = () => open(p.id); chips.appendChild(b);
   }
 })();
