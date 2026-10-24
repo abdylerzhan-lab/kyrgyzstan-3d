@@ -1,152 +1,213 @@
 <!doctype html>
 <html lang="ru">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Кыргызстан 3D</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=PT+Sans:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 <style>
-/* Тёплый шёлк (выбор Эржана): песок и терракота, экран как в приложении — модель сверху, гид под ней. Одна светлая тема — так выбрано. */
+/* Тёплый шёлк: песок и терракота поверх спутниковой карты с рельефом. Карта на весь экран, карточка места снизу. */
 :root{
   --sand:#f8f3ea; --paper:#fffdf8; --ink:#2b2118; --muted:#86715d; --line:#e8dccb;
-  --clay:#b5532c; --clay-ink:#ffffff; --sky:#d7e7f1; --steppe:#e6d4b3;
+  --clay:#b5532c; --clay-ink:#fff;
   --display:"Rubik","Segoe UI",Arial,sans-serif; --body:"PT Sans","Segoe UI",Arial,sans-serif;
-  color-scheme:light;
 }
 *{box-sizing:border-box}
-body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);margin:0}
-.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 28px;display:flex;flex-direction:column;gap:14px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.brand{font:800 18px/1 var(--display);letter-spacing:.06em;color:var(--clay)}
+html,body{height:100%;margin:0}
+body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);overflow:hidden}
+#map{position:fixed;inset:0}
+.top{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px));
+  background:linear-gradient(rgba(248,243,234,.96),rgba(248,243,234,.82));border-bottom:1px solid var(--line)}
+.brand{font:800 17px/1 var(--display);letter-spacing:.06em;color:var(--clay);background:none;border:0;padding:0;cursor:pointer}
 .langs{display:flex;gap:4px}
 .langs button{font:700 12px var(--body);padding:5px 10px;border-radius:20px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
-.langs button[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:var(--clay-ink)}
-h1{font:800 clamp(28px,8vw,36px)/1.05 var(--display);margin:0;text-wrap:balance}
-.meta{color:var(--muted);font-size:14px;margin-top:4px}
-.stage{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(var(--sky) 0%,#eef4f6 60%,var(--steppe) 60%,#dcc7a3 100%)}
-model-viewer{width:100%;height:min(62vh,460px);display:block;--poster-color:transparent;background:transparent}
-.tog{position:absolute;top:12px;left:12px;display:flex;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:rgba(255,253,248,.92)}
-.tog button{font:700 13px var(--body);padding:7px 13px;border:0;background:transparent;color:var(--muted);cursor:pointer}
-.tog button[aria-pressed="true"]{background:var(--clay);color:var(--clay-ink)}
-.chip360{position:absolute;top:12px;right:12px;font:700 12px var(--body);padding:6px 11px;border-radius:20px;background:rgba(255,253,248,.92);border:1px solid var(--line)}
-.note{position:absolute;left:12px;right:12px;bottom:12px;font-size:12.5px;line-height:1.35;padding:8px 11px;border-radius:12px;background:rgba(255,253,248,.94);border:1px solid var(--line)}
-.load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);pointer-events:none}
-.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.fact{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 10px 9px}
-.fact b{display:block;font:700 20px/1.1 var(--display);font-variant-numeric:tabular-nums}
-.fact span{font-size:12px;color:var(--muted);line-height:1.25;display:block;margin-top:3px}
-.guide{display:flex;flex-direction:column;gap:9px}
-.b{padding:10px 13px;border-radius:18px;max-width:90%;font-size:15px}
-.g{background:var(--paper);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
-.g .who{display:block;font:700 11px var(--body);letter-spacing:.08em;color:var(--clay);margin-bottom:3px}
-.g .src{display:block;font-size:11.5px;color:var(--muted);margin-top:5px}
-.u{background:var(--clay);color:var(--clay-ink);align-self:flex-end;border-bottom-right-radius:6px}
-.asks{display:flex;flex-wrap:wrap;gap:7px}
-.asks button{font:15px var(--body);padding:8px 13px;border-radius:20px;border:1px solid var(--clay);background:var(--paper);color:var(--clay);cursor:pointer}
-.asks button:disabled{opacity:.45;cursor:default}
-.bar{display:flex;gap:10px;align-items:center}
-.inp{flex:1;min-width:0;height:46px;border-radius:23px;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;padding:0 16px;font-size:14px;color:var(--muted)}
-.mic{width:50px;height:50px;border-radius:50%;border:0;background:var(--clay);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(181,83,44,.35);flex:none}
-h2{font:700 15px var(--display);margin:6px 0 0;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-.places{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
-.place{flex:none;padding:9px 13px;border-radius:14px;border:1px solid var(--line);background:var(--paper);font-size:14px}
-.place.on{border-color:var(--clay);color:var(--clay);font-weight:700}
-.place small{display:block;color:var(--muted);font-size:11.5px;font-weight:400}
-.demo{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.langs button[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:#fff}
+.chips{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;gap:8px;overflow-x:auto;
+  padding:12px max(14px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px))}
+.chips button{flex:none;font:700 14px var(--body);padding:10px 14px;border-radius:22px;border:1px solid var(--line);background:rgba(255,253,248,.96);color:var(--ink);cursor:pointer;box-shadow:0 4px 14px rgba(43,33,24,.18)}
+.chips button span{color:var(--muted);font-weight:400;margin-left:5px}
+.pin{display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.pin b{font:700 13px var(--body);background:var(--paper);color:var(--ink);padding:4px 9px;border-radius:12px;border:1px solid var(--line);white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.pin i{width:16px;height:16px;border-radius:50%;background:var(--clay);border:3px solid #fff;margin-top:4px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:6;max-height:50vh;overflow-y:auto;background:var(--paper);border-radius:22px 22px 0 0;
+  box-shadow:0 -10px 30px rgba(43,33,24,.25);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  transform:translateY(105%);transition:transform .35s ease}
+.sheet.open{transform:none}
+.grip{width:42px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+h1{font:800 26px/1.08 var(--display);margin:0;text-wrap:balance}
+.region{color:var(--muted);font-size:14px;margin-top:3px}
+.close{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--sand);font-size:18px;cursor:pointer;color:var(--ink)}
+.tabs{display:flex;gap:6px;margin:12px 0 10px}
+.tabs button{font:700 14px var(--body);padding:8px 14px;border-radius:20px;border:1px solid var(--clay);background:var(--paper);color:var(--clay);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--clay);color:#fff}
+.facts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.facts li{background:var(--sand);border-radius:12px;padding:9px 12px;font-size:15px}
+.facts small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+.gal{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.gal figure{flex:none;width:min(78vw,340px);margin:0}
+.gal img,.gal video{width:100%;height:210px;object-fit:cover;border-radius:14px;background:var(--line);display:block}
+.gal figcaption{font-size:11.5px;color:var(--muted);margin-top:4px}
+.gal figcaption a{color:inherit}
+model-viewer{width:100%;height:300px;border-radius:16px;background:linear-gradient(#d7e7f1 0%,#eef4f6 60%,#e6d4b3 60%,#dcc7a3 100%)}
+.more{display:inline-block;margin-top:10px;font-weight:700;color:var(--clay)}
+.empty{color:var(--muted);font-size:14px;background:var(--sand);border-radius:12px;padding:12px}
+.maplibregl-ctrl-attrib{font-size:10px}
+.maplibregl-ctrl-top-right{top:calc(56px + env(safe-area-inset-top,0px))}
 button:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
-@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
 </style>
+</head>
+<body>
+<div id="map" aria-label="Карта Кыргызстана с рельефом"></div>
 
-<div class="app">
-  <div class="top">
-    <div class="brand">КЫРГЫЗСТАН 3D</div>
-    <div class="langs" role="group" aria-label="Язык">
-      <button id="lang-kg" type="button" aria-pressed="false">KG</button>
-      <button id="lang-ru" type="button" aria-pressed="true">RU</button>
-      <button id="lang-en" type="button" aria-pressed="false">EN</button>
-    </div>
+<div class="top">
+  <button class="brand" id="home" type="button">КЫРГЫЗСТАН 3D</button>
+  <div class="langs" role="group" aria-label="Язык">
+    <button id="lang-kg" type="button" aria-pressed="false">KG</button>
+    <button type="button" aria-pressed="true">RU</button>
+    <button id="lang-en" type="button" aria-pressed="false">EN</button>
   </div>
-
-  <div>
-    <h1>Башня Бурана</h1>
-    <div class="meta">Чуйская область · около 10 км к югу от Токмока</div>
-  </div>
-
-  <div class="stage">
-    <model-viewer id="mv" src="burana-now.glb" alt="3D-модель башни Бурана" camera-controls touch-action="pan-y"
-      auto-rotate auto-rotate-delay="2500" rotation-per-second="18deg" camera-orbit="35deg 78deg 62m" min-camera-orbit="auto auto 25m"
-      max-camera-orbit="auto 95deg 220m" field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">
-      <div slot="poster" class="load" id="load">Загружаю модель…</div>
-    </model-viewer>
-    <div class="tog" role="group" aria-label="Вид башни">
-      <button id="v-now" type="button" aria-pressed="true">Сейчас</button>
-      <button id="v-past" type="button" aria-pressed="false">Каким был</button>
-    </div>
-    <div class="chip360">↻ 360°</div>
-    <div class="note" id="note" hidden>Верх — условная реконструкция: башня была 40–48 м, наверху купол‑фонарь с четырьмя проёмами. Точной формы никто не знает.</div>
-  </div>
-
-  <div class="facts">
-    <div class="fact"><b>21,7 м</b><span>высота сейчас</span></div>
-    <div class="fact"><b>40–48 м</b><span>была до землетрясений (оценки)</span></div>
-    <div class="fact"><b>9,3 → 6 м</b><span>диаметр ствола внизу и вверху</span></div>
-  </div>
-
-  <div class="guide" id="chat" aria-live="polite">
-    <div class="b g"><span class="who">ГИД</span>Салам! Перед вами минарет средневекового города Баласагун. Покрутите башню пальцем и спросите меня о чём угодно.</div>
-  </div>
-  <div class="asks" id="asks">
-    <button type="button" data-q="past">Какой была башня?</button>
-    <button type="button" data-q="road">Как доехать?</button>
-    <button type="button" data-q="balbal">Что такое балбалы?</button>
-    <button type="button" data-q="up">Можно подняться?</button>
-    <button type="button" data-q="stairs">Что за бирюзовая лестница?</button>
-  </div>
-  <div class="bar">
-    <div class="inp">Спросите гида…</div>
-    <button class="mic" id="mic" type="button" aria-label="Спросить голосом"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="#fff"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="#fff" stroke-width="2" fill="none"/></svg></button>
-  </div>
-
-  <h2>Другие места</h2>
-  <div class="places">
-    <div class="place on">Бурана<small>готово</small></div>
-    <div class="place">Храм Троицы, Каракол<small>скоро</small></div>
-    <div class="place">Таш-Рабат<small>скоро</small></div>
-    <div class="place">Сулайман-Тоо<small>скоро</small></div>
-  </div>
-
-  <div class="demo">Демо для конкурса «100 идей для Кыргызстана». Ответы гида пока заготовлены заранее, в рабочей версии гид — нейросеть, говорит голосом на кыргызском, русском и английском. Модель построена по фото и справочным размерам; источники размеров расходятся.</div>
 </div>
 
+<div class="chips" id="chips"></div>
+
+<section class="sheet" id="sheet" aria-live="polite">
+  <div class="grip"></div>
+  <div class="head">
+    <div><h1 id="s-name"></h1><div class="region" id="s-region"></div></div>
+    <button class="close" id="s-close" type="button" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="tabs" role="group" aria-label="Разделы">
+    <button type="button" data-tab="about" aria-pressed="true">О месте</button>
+    <button type="button" data-tab="media" aria-pressed="false">Фото и видео</button>
+    <button type="button" data-tab="model" aria-pressed="false" id="tab-model">3D</button>
+  </div>
+  <div id="s-body"></div>
+</section>
+
 <script>
-const A = {
-  past: ["Какой была башня?", "По оценкам, 40–48 метров — вдвое выше нынешней. Верх обрушился при землетрясениях. Наверху, судя по описаниям, был купол‑фонарь с четырьмя проёмами. Включила вид «Каким был».", "ru.wikipedia, architectureguru.ru"],
-  road: ["Как доехать?", "Башня в Чуйской долине, около 10 км к югу от Токмока и примерно в 80 км к востоку от Бишкека. Из Бишкека едут через Токмок, дальше по указателям на «Бурану».", "orexca.com, kyrgyzstantravel.com"],
-  balbal: ["Что такое балбалы?", "Каменные изваяния VI–X веков: от простых валунов до фигур с лицом и руками. Их собрали со всей Чуйской долины и поставили рядами возле башни.", "ru.wikipedia, kyrgyzstantravel.com"],
-  up: ["Можно подняться?", "Внутри, в толще стены, идёт узкая винтовая кирпичная лестница до самого верха. Вход — на высоте около 5 метров, с южной стороны.", "ru.wikipedia, architectureguru.ru"],
-  stairs: ["Что за бирюзовая лестница?", "Это современная добавка времён реставрации 1970‑х: металлическая винтовая лестница и мостик ведут к входу, который находится высоко над землёй.", "architectureguru.ru, ancient-origins.net"]
+// камера для каждого места: насколько близко подлететь и под каким углом
+const VIEW = {
+  "burana":       {zoom: 15.6, pitch: 62, bearing: 30},
+  "kel-suu":      {zoom: 12.9, pitch: 55, bearing: 160},
+  "tash-rabat":   {zoom: 14.6, pitch: 64, bearing: 120},
+  "karakol":      {zoom: 15.8, pitch: 58, bearing: -20},
+  "sulaiman-too": {zoom: 14.8, pitch: 62, bearing: 60}
 };
-const mv = document.getElementById("mv"), chat = document.getElementById("chat"), note = document.getElementById("note");
-const vNow = document.getElementById("v-now"), vPast = document.getElementById("v-past");
-mv.addEventListener("error", () => { document.getElementById("load").textContent = "Модель не загрузилась — обновите страницу"; });
-function view(past) {
-  mv.src = past ? "burana-past.glb" : "burana-now.glb";
-  mv.cameraOrbit = past ? "35deg 86deg 120m" : "35deg 78deg 62m";
-  mv.cameraTarget = past ? "0m 23m 0m" : "auto auto auto";
-  vPast.setAttribute("aria-pressed", past); vNow.setAttribute("aria-pressed", !past); note.hidden = !past;
-}
-vNow.onclick = () => view(false); vPast.onclick = () => view(true);
-function bubble(cls, html) { const d = document.createElement("div"); d.className = "b " + cls; d.innerHTML = html; chat.appendChild(d); return d; }
-document.getElementById("asks").addEventListener("click", e => {
-  const k = e.target.dataset && e.target.dataset.q; if (!k) return;
-  const [q, a, s] = A[k]; e.target.disabled = true;
-  bubble("u", q);
-  const t = bubble("g", '<span class="who">ГИД</span>…');
-  setTimeout(() => { t.innerHTML = '<span class="who">ГИД</span>' + a + '<span class="src">Источник: ' + s + '</span>'; if (k === "past") view(true); }, 450);
+const KG = [[69.2, 39.15], [80.3, 43.3]];
+let PLACES = [], current = null;
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: {
+    version: 8,
+    sources: {
+      sat: {type: "raster", tileSize: 256, maxzoom: 15,
+        tiles: ["https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg"],
+        attribution: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless — s2maps.eu</a> by EOX (Copernicus Sentinel data 2020)'},
+      dem: {type: "raster-dem", encoding: "terrarium", tileSize: 256, maxzoom: 15,
+        tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+        attribution: 'Рельеф: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Terrain Tiles</a>'},
+      // отдельный источник для теней рельефа — так MapLibre рисует чище
+      dem2: {type: "raster-dem", encoding: "terrarium", tileSize: 256, maxzoom: 15,
+        tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"]}
+    },
+    layers: [
+      {id: "bg", type: "background", paint: {"background-color": "#e9dcc6"}},
+      {id: "sat", type: "raster", source: "sat"},
+      {id: "shade", type: "hillshade", source: "dem2", paint: {"hillshade-exaggeration": 0.35, "hillshade-shadow-color": "#3b2a1c"}}
+    ],
+    terrain: {source: "dem", exaggeration: 1.3}
+  },
+  bounds: KG, fitBoundsOptions: {padding: 20},
+  pitch: 40, maxPitch: 80, attributionControl: {compact: true}
 });
-document.getElementById("mic").onclick = () => bubble("g", '<span class="who">ГИД</span>Голосом можно будет спрашивать в рабочей версии. Пока выберите вопрос выше.');
-for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = () => bubble("g", '<span class="who">ГИД</span>Кыргызча жана English — в рабочей версии. Тексты сейчас переводим и проверяем.');
+map.addControl(new maplibregl.NavigationControl({visualizePitch: true}), "top-right");
+map.on("load", async () => {
+  try { map.setSky({"sky-color": "#a9c9e6", "horizon-color": "#f3e7d3", "fog-color": "#f3e7d3", "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.3}); } catch (e) {}
+  // граница страны и затемнение всего, что за ней
+  try {
+    const kg = await (await fetch("kg-border.json")).json();
+    const outer = kg.features[0].geometry.coordinates.map(p => p[0]);
+    map.addSource("kg", {type: "geojson", data: kg});
+    map.addSource("mask", {type: "geojson", data: {type: "Feature", geometry: {type: "Polygon",
+      coordinates: [[[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]], ...outer]}}});
+    map.addLayer({id: "mask", type: "fill", source: "mask", paint: {"fill-color": "#f8f3ea", "fill-opacity": 0.55}});
+    map.addLayer({id: "kg-line", type: "line", source: "kg", paint: {"line-color": "#b5532c", "line-width": 2.2, "line-opacity": 0.9}});
+  } catch (e) { console.warn("граница не загрузилась", e); }
+});
+
+function pin(p) {
+  const el = document.createElement("div");
+  el.className = "pin"; el.innerHTML = "<b>" + p.short + "</b><i></i>";
+  el.addEventListener("click", ev => { ev.stopPropagation(); open(p.id); });
+  new maplibregl.Marker({element: el, anchor: "bottom"}).setLngLat([p.lon, p.lat]).addTo(map);
+}
+
+const sheet = document.getElementById("sheet"), body = document.getElementById("s-body");
+function open(id) {
+  const p = PLACES.find(x => x.id === id); if (!p) return;
+  current = p;
+  const v = VIEW[id] || {zoom: 14, pitch: 60, bearing: 0};
+  map.flyTo({center: [p.lon, p.lat], zoom: v.zoom, pitch: v.pitch, bearing: v.bearing, duration: 4200, essential: true,
+    padding: {bottom: Math.round(window.innerHeight * 0.5), top: 40, left: 0, right: 0}});
+  document.getElementById("s-name").textContent = p.name_ru;
+  document.getElementById("s-region").textContent = p.region_ru || "";
+  document.getElementById("tab-model").hidden = !p.model;
+  tab("about");
+  sheet.classList.add("open");
+  document.getElementById("chips").hidden = true;
+}
+function closeSheet() {
+  sheet.classList.remove("open"); document.getElementById("chips").hidden = false; current = null;
+  map.flyTo({center: [74.8, 41.3], zoom: map.getZoom() > 8 ? 6.3 : map.getZoom(), pitch: 40, bearing: 0, duration: 3000, padding: {bottom: 0, top: 0, left: 0, right: 0}});
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c])); }
+function tab(name) {
+  for (const b of document.querySelectorAll(".tabs button")) b.setAttribute("aria-pressed", b.dataset.tab === name);
+  const p = current;
+  if (name === "about") {
+    body.innerHTML = (p.facts_ru && p.facts_ru.length)
+      ? '<ul class="facts">' + p.facts_ru.map(f => "<li>" + esc(f.text) + (f.src ? "<small>Источник: " + esc(f.src) + "</small>" : "") + "</li>").join("") + "</ul>"
+      : '<div class="empty">Описание готовится.</div>';
+  } else if (name === "media") {
+    const m = p.media || [];
+    body.innerHTML = m.length ? '<div class="gal">' + m.map(x =>
+      "<figure>" + (x.type === "video"
+        ? '<video src="' + esc(x.file) + '" controls playsinline muted preload="metadata"></video>'
+        : '<img src="' + esc(x.file) + '" alt="' + esc(p.name_ru) + '" loading="lazy">') +
+      '<figcaption>' + esc(x.author || "") + (x.license ? ", " + esc(x.license) : "") +
+      (x.page ? ' · <a href="' + esc(x.page) + '" target="_blank" rel="noopener">Wikimedia Commons</a>' : "") + "</figcaption></figure>").join("") + "</div>"
+      : '<div class="empty">Фото и видео скоро появятся.</div>';
+  } else {
+    body.innerHTML = '<model-viewer src="' + esc(p.model) + '" camera-controls auto-rotate touch-action="pan-y" camera-orbit="35deg 78deg 62m" field-of-view="30deg" shadow-intensity="1" interaction-prompt="none" alt="3D-модель"></model-viewer>' +
+      '<a class="more" href="' + esc(p.page) + '">Открыть 3D на весь экран: «сейчас» и «каким был» →</a>';
+  }
+}
+for (const b of document.querySelectorAll(".tabs button")) b.onclick = () => tab(b.dataset.tab);
+document.getElementById("s-close").onclick = closeSheet;
+document.getElementById("home").onclick = () => { if (current) closeSheet(); map.fitBounds(KG, {padding: 20, pitch: 40, bearing: 0, duration: 2500}); };
+for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = () => alert("Кыргызча жана English — в рабочей версии.");
+
+(async () => {
+  const d = await (await fetch("media/places.json")).json();
+  const SHORT = {"burana": "Бурана", "kel-suu": "Кель-Суу", "tash-rabat": "Таш-Рабат", "karakol": "Храм Троицы", "sulaiman-too": "Сулайман-Тоо"};
+  PLACES = d.places.map(p => Object.assign({short: SHORT[p.id] || p.name_ru}, p,
+    p.id === "burana" ? {model: "burana-now.glb", page: "burana.html"} : {}));
+  const chips = document.getElementById("chips");
+  for (const p of PLACES) {
+    pin(p);
+    const b = document.createElement("button"); b.type = "button";
+    b.innerHTML = esc(p.short) + "<span>" + esc((p.region_ru || "").replace(" область", " обл.")) + "</span>";
+    b.onclick = () => open(p.id); chips.appendChild(b);
+  }
+})();
 </script>
+</body>
 </html>
