@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кыргызстан 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=PT+Sans:wght@400;700&display=swap">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+/* Тёплый шёлк (выбор Эржана): песок и терракота, экран как в приложении — модель сверху, гид под ней. Одна светлая тема — так выбрано. */
+:root{
+  --sand:#f8f3ea; --paper:#fffdf8; --ink:#2b2118; --muted:#86715d; --line:#e8dccb;
+  --clay:#b5532c; --clay-ink:#ffffff; --sky:#d7e7f1; --steppe:#e6d4b3;
+  --display:"Rubik","Segoe UI",Arial,sans-serif; --body:"PT Sans","Segoe UI",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);margin:0}
+.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 28px;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font:800 18px/1 var(--display);letter-spacing:.06em;color:var(--clay)}
+.langs{display:flex;gap:4px}
+.langs button{font:700 12px var(--body);padding:5px 10px;border-radius:20px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:var(--clay-ink)}
+h1{font:800 clamp(28px,8vw,36px)/1.05 var(--display);margin:0;text-wrap:balance}
+.meta{color:var(--muted);font-size:14px;margin-top:4px}
+.stage{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(var(--sky) 0%,#eef4f6 60%,var(--steppe) 60%,#dcc7a3 100%)}
+model-viewer{width:100%;height:min(62vh,460px);display:block;--poster-color:transparent;background:transparent}
+.tog{position:absolute;top:12px;left:12px;display:flex;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:rgba(255,253,248,.92)}
+.tog button{font:700 13px var(--body);padding:7px 13px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.tog button[aria-pressed="true"]{background:var(--clay);color:var(--clay-ink)}
+.chip360{position:absolute;top:12px;right:12px;font:700 12px var(--body);padding:6px 11px;border-radius:20px;background:rgba(255,253,248,.92);border:1px solid var(--line)}
+.note{position:absolute;left:12px;right:12px;bottom:12px;font-size:12.5px;line-height:1.35;padding:8px 11px;border-radius:12px;background:rgba(255,253,248,.94);border:1px solid var(--line)}
+.load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);pointer-events:none}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fact{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 10px 9px}
+.fact b{display:block;font:700 20px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.fact span{font-size:12px;color:var(--muted);line-height:1.25;display:block;margin-top:3px}
+.guide{display:flex;flex-direction:column;gap:9px}
+.b{padding:10px 13px;border-radius:18px;max-width:90%;font-size:15px}
+.g{background:var(--paper);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.g .who{display:block;font:700 11px var(--body);letter-spacing:.08em;color:var(--clay);margin-bottom:3px}
+.g .src{display:block;font-size:11.5px;color:var(--muted);margin-top:5px}
+.u{background:var(--clay);color:var(--clay-ink);align-self:flex-end;border-bottom-right-radius:6px}
+.asks{display:flex;flex-wrap:wrap;gap:7px}
+.asks button{font:15px var(--body);padding:8px 13px;border-radius:20px;border:1px solid var(--clay);background:var(--paper);color:var(--clay);cursor:pointer}
+.asks button:disabled{opacity:.45;cursor:default}
+.bar{display:flex;gap:10px;align-items:center}
+.inp{flex:1;min-width:0;height:46px;border-radius:23px;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;padding:0 16px;font-size:14px;color:var(--muted)}
+.mic{width:50px;height:50px;border-radius:50%;border:0;background:var(--clay);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(181,83,44,.35);flex:none}
+h2{font:700 15px var(--display);margin:6px 0 0;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.places{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.place{flex:none;padding:9px 13px;border-radius:14px;border:1px solid var(--line);background:var(--paper);font-size:14px}
+.place.on{border-color:var(--clay);color:var(--clay);font-weight:700}
+.place small{display:block;color:var(--muted);font-size:11.5px;font-weight:400}
+.demo{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+button:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="app">
+  <div class="top">
+    <div class="brand">КЫРГЫЗСТАН 3D</div>
+    <div class="langs" role="group" aria-label="Язык">
+      <button id="lang-kg" type="button" aria-pressed="false">KG</button>
+      <button id="lang-ru" type="button" aria-pressed="true">RU</button>
+      <button id="lang-en" type="button" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div>
+    <h1>Башня Бурана</h1>
+    <div class="meta">Чуйская область · около 10 км к югу от Токмока</div>
+  </div>
+
+  <div class="stage">
+    <model-viewer id="mv" src="burana-now.glb" alt="3D-модель башни Бурана" camera-controls touch-action="pan-y"
+      auto-rotate auto-rotate-delay="2500" rotation-per-second="18deg" camera-orbit="35deg 78deg 62m" min-camera-orbit="auto auto 25m"
+      max-camera-orbit="auto 95deg 220m" field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">
+      <div slot="poster" class="load" id="load">Загружаю модель…</div>
+    </model-viewer>
+    <div class="tog" role="group" aria-label="Вид башни">
+      <button id="v-now" type="button" aria-pressed="true">Сейчас</button>
+      <button id="v-past" type="button" aria-pressed="false">Каким был</button>
+    </div>
+    <div class="chip360">↻ 360°</div>
+    <div class="note" id="note" hidden>Верх — условная реконструкция: башня была 40–48 м, наверху купол‑фонарь с четырьмя проёмами. Точной формы никто не знает.</div>
+  </div>
+
+  <div class="facts">
+    <div class="fact"><b>21,7 м</b><span>высота сейчас</span></div>
+    <div class="fact"><b>40–48 м</b><span>была до землетрясений (оценки)</span></div>
+    <div class="fact"><b>9,3 → 6 м</b><span>диаметр ствола внизу и вверху</span></div>
+  </div>
+
+  <div class="guide" id="chat" aria-live="polite">
+    <div class="b g"><span class="who">ГИД</span>Салам! Перед вами минарет средневекового города Баласагун. Покрутите башню пальцем и спросите меня о чём угодно.</div>
+  </div>
+  <div class="asks" id="asks">
+    <button type="button" data-q="past">Какой была башня?</button>
+    <button type="button" data-q="road">Как доехать?</button>
+    <button type="button" data-q="balbal">Что такое балбалы?</button>
+    <button type="button" data-q="up">Можно подняться?</button>
+    <button type="button" data-q="stairs">Что за бирюзовая лестница?</button>
+  </div>
+  <div class="bar">
+    <div class="inp">Спросите гида…</div>
+    <button class="mic" id="mic" type="button" aria-label="Спросить голосом"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="#fff"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="#fff" stroke-width="2" fill="none"/></svg></button>
+  </div>
+
+  <h2>Другие места</h2>
+  <div class="places">
+    <div class="place on">Бурана<small>готово</small></div>
+    <div class="place">Храм Троицы, Каракол<small>скоро</small></div>
+    <div class="place">Таш-Рабат<small>скоро</small></div>
+    <div class="place">Сулайман-Тоо<small>скоро</small></div>
+  </div>
+
+  <div class="demo">Демо для конкурса «100 идей для Кыргызстана». Ответы гида пока заготовлены заранее, в рабочей версии гид — нейросеть, говорит голосом на кыргызском, русском и английском. Модель построена по фото и справочным размерам; источники размеров расходятся.</div>
+</div>
+
+<script>
+const A = {
+  past: ["Какой была башня?", "По оценкам, 40–48 метров — вдвое выше нынешней. Верх обрушился при землетрясениях. Наверху, судя по описаниям, был купол‑фонарь с четырьмя проёмами. Включила вид «Каким был».", "ru.wikipedia, architectureguru.ru"],
+  road: ["Как доехать?", "Башня в Чуйской долине, около 10 км к югу от Токмока и примерно в 80 км к востоку от Бишкека. Из Бишкека едут через Токмок, дальше по указателям на «Бурану».", "orexca.com, kyrgyzstantravel.com"],
+  balbal: ["Что такое балбалы?", "Каменные изваяния VI–X веков: от простых валунов до фигур с лицом и руками. Их собрали со всей Чуйской долины и поставили рядами возле башни.", "ru.wikipedia, kyrgyzstantravel.com"],
+  up: ["Можно подняться?", "Внутри, в толще стены, идёт узкая винтовая кирпичная лестница до самого верха. Вход — на высоте около 5 метров, с южной стороны.", "ru.wikipedia, architectureguru.ru"],
+  stairs: ["Что за бирюзовая лестница?", "Это современная добавка времён реставрации 1970‑х: металлическая винтовая лестница и мостик ведут к входу, который находится высоко над землёй.", "architectureguru.ru, ancient-origins.net"]
+};
+const mv = document.getElementById("mv"), chat = document.getElementById("chat"), note = document.getElementById("note");
+const vNow = document.getElementById("v-now"), vPast = document.getElementById("v-past");
+mv.addEventListener("error", () => { document.getElementById("load").textContent = "Модель не загрузилась — обновите страницу"; });
+function view(past) {
+  mv.src = past ? "burana-past.glb" : "burana-now.glb";
+  mv.cameraOrbit = past ? "35deg 86deg 120m" : "35deg 78deg 62m";
+  mv.cameraTarget = past ? "0m 23m 0m" : "auto auto auto";
+  vPast.setAttribute("aria-pressed", past); vNow.setAttribute("aria-pressed", !past); note.hidden = !past;
+}
+vNow.onclick = () => view(false); vPast.onclick = () => view(true);
+function bubble(cls, html) { const d = document.createElement("div"); d.className = "b " + cls; d.innerHTML = html; chat.appendChild(d); return d; }
+document.getElementById("asks").addEventListener("click", e => {
+  const k = e.target.dataset && e.target.dataset.q; if (!k) return;
+  const [q, a, s] = A[k]; e.target.disabled = true;
+  bubble("u", q);
+  const t = bubble("g", '<span class="who">ГИД</span>…');
+  setTimeout(() => { t.innerHTML = '<span class="who">ГИД</span>' + a + '<span class="src">Источник: ' + s + '</span>'; if (k === "past") view(true); }, 450);
+});
+document.getElementById("mic").onclick = () => bubble("g", '<span class="who">ГИД</span>Голосом можно будет спрашивать в рабочей версии. Пока выберите вопрос выше.');
+for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = () => bubble("g", '<span class="who">ГИД</span>Кыргызча жана English — в рабочей версии. Тексты сейчас переводим и проверяем.');
+</script>
+</html>
