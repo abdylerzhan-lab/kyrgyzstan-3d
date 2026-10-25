@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Сулайман-Тоо 3D</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=PT+Sans:wght@400;700&display=swap">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+/* Тёплый шёлк, как страница Бураны: макет на весь экран, подпись сверху */
+:root{--sand:#f8f3ea;--paper:#fffdf8;--ink:#2b2118;--muted:#86715d;--line:#e8dccb;--clay:#b5532c;
+  --display:"Rubik","Segoe UI",Arial,sans-serif;--body:"PT Sans","Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);display:flex;flex-direction:column}
+.top{padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
+.back{font:800 15px var(--display);letter-spacing:.06em;color:var(--clay);text-decoration:none}
+h1{font:800 30px/1.05 var(--display);margin:8px 0 2px}
+.meta{color:var(--muted);font-size:14px}
+model-viewer{flex:1;width:100%;min-height:0;background:linear-gradient(#d7e7f1 0%,#eef4f6 100%)}
+.note{font-size:12.5px;color:var(--muted);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="back" href="index.html">← КАРТА</a>
+  <h1>Гора Сулайман-Тоо</h1>
+  <div class="meta">Город Ош · Всемирное наследие ЮНЕСКО с 2009 года</div>
+</div>
+<model-viewer src="sulaiman-too.glb" alt="3D-макет горы Сулайман-Тоо" camera-controls touch-action="none" auto-rotate auto-rotate-delay="3000"
+  rotation-per-second="10deg" camera-orbit="20deg 55deg 4000m" min-camera-orbit="auto 0deg 900m" max-camera-orbit="auto 85deg 9000m"
+  field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none"></model-viewer>
+<div class="note">Макет 3 × 3 км: высоты — AWS Terrain Tiles, снимок — Sentinel-2 cloudless (s2maps.eu, EOX). Рельеф по высоте усилен в 1,5 раза. Крутите одним пальцем, приближайте двумя.</div>
+</body>
+</html>
