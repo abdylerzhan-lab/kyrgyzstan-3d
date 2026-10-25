@@ -18,6 +18,12 @@ body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);display:
 h1{font:800 30px/1.05 var(--display);margin:8px 0 2px}
 .meta{color:var(--muted);font-size:14px}
 model-viewer{flex:1;width:100%;min-height:0;background:linear-gradient(#d7e7f1 0%,#eef4f6 100%)}
+.hs{background:none;border:0;padding:0;display:block;transform:translateY(-50%)}
+.hs::before{content:"";display:block;width:10px;height:10px;margin:0 auto;border-radius:50%;background:var(--clay);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.hs span{display:block;margin-top:3px;padding:2px 7px;border-radius:9px;background:rgba(255,253,248,.92);color:var(--ink);font:700 11.5px/1.2 var(--body);white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.hs.up{display:flex;flex-direction:column-reverse;transform:translateY(-88%)}
+.hs.up span{margin:0 0 3px}
+.hs[data-visible=false]{opacity:.25}
 .note{font-size:12.5px;color:var(--muted);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 </style>
 </head>
@@ -28,8 +34,13 @@ model-viewer{flex:1;width:100%;min-height:0;background:linear-gradient(#d7e7f1 0
   <div class="meta">Город Ош · Всемирное наследие ЮНЕСКО с 2009 года</div>
 </div>
 <model-viewer src="sulaiman-too.glb" alt="3D-макет горы Сулайман-Тоо" camera-controls touch-action="none" auto-rotate auto-rotate-delay="3000"
-  rotation-per-second="10deg" camera-orbit="20deg 55deg 4000m" min-camera-orbit="auto 0deg 900m" max-camera-orbit="auto 85deg 9000m"
-  field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none"></model-viewer>
-<div class="note">Макет 3 × 3 км: высоты — AWS Terrain Tiles, снимок — Sentinel-2 cloudless (s2maps.eu, EOX). Рельеф по высоте усилен в 1,5 раза. Крутите одним пальцем, приближайте двумя.</div>
+  rotation-per-second="10deg" camera-orbit="10deg 60deg 2100m" camera-target="150m 90m 0m" min-camera-orbit="auto 0deg 500m" max-camera-orbit="auto 85deg 6000m"
+  field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">
+  <button class="hs up" slot="hotspot-0" data-position="543.7m 152.5m -57.3m" data-normal="0m 1m 0m"><span>Дом Бабура</span></button>
+  <button class="hs" slot="hotspot-1" data-position="-22.7m 167.5m 149.1m" data-normal="0m 1m 0m"><span>Музей в скале</span></button>
+  <button class="hs" slot="hotspot-2" data-position="424.8m 165.0m -48.4m" data-normal="0m 1m 0m"><span>Пещера Тамчы-Тамар</span></button>
+  <button class="hs" slot="hotspot-3" data-position="161.4m 186.0m 15.4m" data-normal="0m 1m 0m"><span>Пещера Чилтен</span></button>
+</model-viewer>
+<div class="note">Макет 2 × 2 км: высоты — AWS Terrain Tiles, снимок — Sentinel-2 cloudless (s2maps.eu, EOX), дома, дороги, тропы и названия — © участники OpenStreetMap (ODbL). Рельеф по высоте усилен в 1,25 раза. Крутите одним пальцем, приближайте двумя.</div>
 </body>
 </html>

@@ -205,8 +205,8 @@ for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = (
       note3d: "Макет 14 × 14 км по спутниковым высотам и снимку Sentinel-2. Горы по высоте усилены в 1,3 раза, чтобы лучше читались."} :
     p.id === "tash-rabat" ? {model: "tash-rabat.glb", orbit: "70deg 74deg 80m", page: "tash-rabat.html",
       note3d: "Модель по обмерам (фасад 32,4 м, центральный зал 9,1 × 9,26 м) и фото. Высоты, башни, портал и купол — приблизительно, по фото."} :
-    p.id === "sulaiman-too" ? {model: "sulaiman-too.glb", orbit: "20deg 55deg 4000m", page: "sulaiman-too.html",
-      note3d: "Макет 3 × 3 км: гора и город Ош вокруг, по спутниковым высотам и снимку Sentinel-2. Рельеф по высоте усилен в 1,5 раза."} : {}));
+    p.id === "sulaiman-too" ? {model: "sulaiman-too.glb", orbit: "10deg 60deg 1900m", page: "sulaiman-too.html",
+      note3d: "Макет 2 × 2 км: рельеф и снимок Sentinel-2, дома и тропы — OpenStreetMap. Рельеф по высоте усилен в 1,25 раза. Метки мест — на полноэкранной странице."} : {}));
   const chips = document.getElementById("chips");
   for (const p of PLACES) {
     pin(p);

@@ -9,3 +9,4 @@
 - Рельеф: AWS Terrain Tiles (Mapzen, открытые данные).
 - Граница КР: geoBoundaries (CC BY 4.0).
 - Фото: Wikimedia Commons, авторы и лицензии — в media/places.json.
+- Дома, дороги, тропы и названия (Сулайман-Тоо): © участники OpenStreetMap, ODbL.
