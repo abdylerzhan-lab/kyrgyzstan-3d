@@ -1,60 +1,188 @@
 <!doctype html>
 <html lang="ru">
-<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Таш-Рабат 3D</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=PT+Sans:wght@400;700&display=swap">
+<title>Караван-сарай Таш-Рабат — Кыргызстан 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=PT+Sans:wght@400;700&display=swap">
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 <style>
-/* Тёплый шёлк, как страница Бураны: макет на весь экран, подпись сверху */
-:root{--sand:#f8f3ea;--paper:#fffdf8;--ink:#2b2118;--muted:#86715d;--line:#e8dccb;--clay:#b5532c;
-  --display:"Rubik","Segoe UI",Arial,sans-serif;--body:"PT Sans","Segoe UI",Arial,sans-serif}
+/* Тёплый шёлк, как страница Бураны. Собрано tools/pages.py — правки вносить туда. */
+:root{
+  --sand:#f8f3ea; --paper:#fffdf8; --ink:#2b2118; --muted:#86715d; --line:#e8dccb;
+  --clay:#b5532c; --clay-ink:#ffffff; --sky:#d7e7f1; --steppe:#e6d4b3;
+  --display:"Rubik","Segoe UI",Arial,sans-serif; --body:"PT Sans","Segoe UI",Arial,sans-serif;
+  color-scheme:light;
+}
 *{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);display:flex;flex-direction:column}
-.top{padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
-.back{font:800 15px var(--display);letter-spacing:.06em;color:var(--clay);text-decoration:none}
-h1{font:800 30px/1.05 var(--display);margin:8px 0 2px}
-.meta{color:var(--muted);font-size:14px}
-.stage{flex:1;position:relative;min-height:0}
-model-viewer{position:absolute;inset:0;width:100%;height:100%;background:linear-gradient(#d7e7f1 0%,#eef4f6 100%)}
-.tog{position:absolute;top:12px;left:max(12px,env(safe-area-inset-left,0px));display:flex;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:rgba(255,253,248,.92);z-index:2}
+body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);margin:0}
+.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 28px;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font:800 18px/1 var(--display);letter-spacing:.06em;color:var(--clay);text-decoration:none}
+.langs{display:flex;gap:4px}
+.langs button{font:700 12px var(--body);padding:5px 10px;border-radius:20px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:var(--clay-ink)}
+h1{font:800 clamp(28px,8vw,36px)/1.05 var(--display);margin:0;text-wrap:balance}
+.meta{color:var(--muted);font-size:14px;margin-top:4px}
+.stage{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(var(--sky) 0%,#eef4f6 100%)}
+model-viewer{width:100%;height:min(62vh,460px);display:block;--poster-color:transparent;background:transparent}
+.tog{position:absolute;top:12px;left:12px;display:flex;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:rgba(255,253,248,.92)}
 .tog button{font:700 13px var(--body);padding:7px 13px;border:0;background:transparent;color:var(--muted);cursor:pointer}
-.tog button[aria-pressed="true"]{background:var(--clay);color:#fff}
-button:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
-.note{font-size:12.5px;color:var(--muted);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.tog button[aria-pressed="true"]{background:var(--clay);color:var(--clay-ink)}
+.chip360{position:absolute;top:12px;right:12px;font:700 12px var(--body);padding:6px 11px;border-radius:20px;background:rgba(255,253,248,.92);border:1px solid var(--line)}
+.note{font-size:12.5px;line-height:1.35;color:var(--muted)}
+.load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);pointer-events:none}
+.hs{background:none;border:0;padding:0;display:block;transform:translateY(-50%)}
+.hs::before{content:"";display:block;width:10px;height:10px;margin:0 auto;border-radius:50%;background:var(--clay);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.hs span{display:block;margin-top:3px;padding:2px 7px;border-radius:9px;background:rgba(255,253,248,.92);color:var(--ink);font:700 11.5px/1.2 var(--body);white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.hs.up{display:flex;flex-direction:column-reverse;transform:translateY(-88%)}
+.hs.up span{margin:0 0 3px}
+.hs[data-visible=false]{opacity:.25}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fact{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 10px 9px}
+.fact b{display:block;font:700 20px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.fact span{font-size:12px;color:var(--muted);line-height:1.25;display:block;margin-top:3px}
+.guide{display:flex;flex-direction:column;gap:9px}
+.b{padding:10px 13px;border-radius:18px;max-width:90%;font-size:15px}
+.g{background:var(--paper);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.g .who{display:block;font:700 11px var(--body);letter-spacing:.08em;color:var(--clay);margin-bottom:3px}
+.g .src{display:block;font-size:11.5px;color:var(--muted);margin-top:5px}
+.u{background:var(--clay);color:var(--clay-ink);align-self:flex-end;border-bottom-right-radius:6px}
+.asks{display:flex;flex-wrap:wrap;gap:7px}
+.asks button{font:15px var(--body);padding:8px 13px;border-radius:20px;border:1px solid var(--clay);background:var(--paper);color:var(--clay);cursor:pointer}
+.asks button:disabled{opacity:.45;cursor:default}
+.bar{display:flex;gap:10px;align-items:center}
+.inp{flex:1;min-width:0;height:46px;border-radius:23px;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;padding:0 16px;font-size:14px;color:var(--muted)}
+.mic{width:50px;height:50px;border-radius:50%;border:0;background:var(--clay);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(181,83,44,.35);flex:none}
+h2{font:700 15px var(--display);margin:6px 0 0;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.places{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.place{flex:none;padding:9px 13px;border-radius:14px;border:1px solid var(--line);background:var(--paper);font-size:14px;color:var(--ink);text-decoration:none}
+.place.on{border-color:var(--clay);color:var(--clay);font-weight:700}
+.place small{display:block;color:var(--muted);font-size:11.5px;font-weight:400}
+.demo{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
+/* компьютер: модель слева на всю высоту, текст и гид справа */
+@media (min-width:900px){
+  .app{max-width:1240px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,1fr);column-gap:28px;row-gap:14px;align-items:start}
+  .app>*{grid-column:2}
+  .app>.top{grid-column:1 / -1}
+  .app>.stage{grid-column:1;grid-row:2 / span 20;position:sticky;top:14px}
+  .stage model-viewer{height:calc(100vh - 90px)}
+}
 </style>
-</head>
-<body>
-<div class="top">
-  <a class="back" href="index.html">← КАРТА</a>
-  <h1>Караван-сарай Таш-Рабат</h1>
-  <div class="meta">Нарынская область · Великий шёлковый путь</div>
+
+<div class="app">
+  <div class="top">
+    <a class="brand" href="index.html">← КАРТА</a>
+    <div class="langs" role="group" aria-label="Язык">
+      <button id="lang-kg" type="button" aria-pressed="false">KG</button>
+      <button id="lang-ru" type="button" aria-pressed="true">RU</button>
+      <button id="lang-en" type="button" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div>
+    <h1>Караван-сарай Таш-Рабат</h1>
+    <div class="meta">Нарынская область · Великий шёлковый путь</div>
+  </div>
+
+  <div class="stage">
+    <model-viewer id="mv" src="tash-rabat.glb" alt="3D-модель караван-сарая Таш-Рабат" camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000" rotation-per-second="10deg" camera-orbit="70deg 74deg 80m" min-camera-orbit="auto 0deg 25m" max-camera-orbit="auto 88deg 200m" field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">
+      <div slot="poster" class="load" id="load">Загружаю модель…</div>
+    </model-viewer>
+    <div class="tog" role="group" aria-label="Вид">
+      <button id="v-now" type="button" aria-pressed="true">Сейчас</button>
+      <button id="v-life" type="button" aria-pressed="false">Жизнь караван-сарая</button>
+    </div>
+    <div class="chip360">↻ 360°</div>
+  </div>
+
+  <div class="note" id="note-0">Модель приблизительная: фасады 32,4 м и центральный зал 9,1 × 9,26 м — по обмерам (informer.kg), высоты, башни, портал и купол — по фото Wikimedia Commons. Крутите пальцем, приближайте двумя.</div>
+  <div class="note" id="note-1" hidden>«Жизнь караван-сарая» — иллюстрация, а не реконструкция: так могла выглядеть стоянка каравана на Шёлковом пути. Крутите пальцем, приближайте двумя.</div>
+
+  <div class="facts">
+    <div class="fact"><b>~31</b><span>комната с куполами (en.wikipedia)</span></div>
+    <div class="fact"><b>~3200 м</b><span>над уровнем моря (источники расходятся)</span></div>
+    <div class="fact"><b>X или XV в.</b><span>время постройки — спорно</span></div>
+  </div>
+
+  <div class="guide" id="chat" aria-live="polite">
+    <div class="b g"><span class="who">ГИД</span>Салам! Я твой гид по Таш-Рабату. Это каменный караван-сарай высоко в горах Нарынской области — спрашивай, что интересно.</div>
+  </div>
+  <div class="asks" id="asks">
+    <button type="button" data-q="road">Как доехать?</button>
+    <button type="button" data-q="when">Когда лучше ехать?</button>
+    <button type="button" data-q="built">Кто и когда его построил?</button>
+    <button type="button" data-q="rooms">Сколько в нём комнат?</button>
+    <button type="button" data-q="why">Зачем караван-сарай в горах?</button>
+  </div>
+  <div class="bar">
+    <div class="inp">Спросите гида…</div>
+    <button class="mic" id="mic" type="button" aria-label="Спросить голосом"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="#fff"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="#fff" stroke-width="2" fill="none"/></svg></button>
+  </div>
+
+  <h2>Другие места</h2>
+  <div class="places">
+    <a class="place" href="burana.html">Бурана<small>Чуйская обл.</small></a>
+    <a class="place on" aria-current="page" href="tash-rabat.html">Таш-Рабат<small>Нарынская обл.</small></a>
+    <a class="place" href="kel-suu.html">Кель-Суу<small>Нарынская обл.</small></a>
+    <a class="place" href="sulaiman-too.html">Сулайман-Тоо<small>Ош</small></a>
+  </div>
+
+  <div class="demo">Демо для конкурса «100 идей для Кыргызстана». Ответы гида пока заготовлены заранее и проверены по источникам, в рабочей версии гид — нейросеть, говорит голосом на кыргызском, русском и английском.</div>
 </div>
-<div class="stage">
-<model-viewer id="mv" src="tash-rabat.glb" alt="3D-модель караван-сарая Таш-Рабат" camera-controls touch-action="none" auto-rotate auto-rotate-delay="3000"
-  rotation-per-second="10deg" camera-orbit="70deg 74deg 80m" min-camera-orbit="auto 0deg 25m" max-camera-orbit="auto 88deg 200m"
-  field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none"></model-viewer>
-<div class="tog" role="group" aria-label="Вид">
-  <button id="v-now" type="button" aria-pressed="true">Сейчас</button>
-  <button id="v-life" type="button" aria-pressed="false">Жизнь караван-сарая</button>
-</div>
-</div>
-<div class="note" id="note-now">Модель приблизительная: восточный и западный фасады 32,4 м и центральный зал 9,1 × 9,26 м — по обмерам (informer.kg), длина ~35,7 м — по туристическим сайтам; высоты, башни, портал и купол — по фото Wikimedia Commons. Крутите одним пальцем, приближайте двумя.</div>
-<div class="note" id="note-life" hidden>Иллюстрация, а не реконструкция: так могла выглядеть стоянка каравана на Шёлковом пути — двугорбые верблюды, путники у костра, юрты кочевников. Здание то же, что в виде «Сейчас». Крутите одним пальцем, приближайте двумя.</div>
+
 <script>
-const mv = document.getElementById("mv"), bNow = document.getElementById("v-now"), bLife = document.getElementById("v-life");
+const A = {
+ "road": [
+  "Как доехать?",
+  "От Нарына примерно 125 км, это около 1,5–2 часов; последние 17 км после конца асфальта — грунтовка, лучше внедорожник. От Бишкека около 520 км. Советуют переночевать в Нарыне или Ат-Баши, чтобы привыкнуть к высоте (около 3200 м).",
+  "orexca.com, visitkyrgyzstan.org"
+ ],
+ "when": [
+  "Когда лучше ехать?",
+  "С июня по сентябрь. С октября по май дорогу может закрыть снег, а в начале июня и в конце сентября на перевале ещё бывает холодно. Ночью у здания почти морозно даже летом, возьмите тёплое.",
+  "visitkyrgyzstan.org"
+ ],
+ "built": [
+  "Кто и когда его построил?",
+  "Точно не известно. Одни источники пишут о XV веке, другие находят следы жизни ещё в X веке. Есть легенды о хане или богатом местном человеке, но доказательств нет. Для Запада здание описал Валиханов в 1859 году.",
+  "orexca.com, ru.wikipedia.org, en.wikipedia.org"
+ ],
+ "rooms": [
+  "Сколько в нём комнат?",
+  "Вокруг центрального зала примерно 30–31 небольшая комната с куполами, среди них была и кухня. Точное число назвать трудно: часть стен не сохранилась. Внутри темно, поэтому берут фонарик.",
+  "orexca.com, visitkyrgyzstan.org, en.wikipedia.org"
+ ],
+ "why": [
+  "Зачем караван-сарай в горах?",
+  "Здесь шёл путь к перевалам в сторону Китая. Купцы, паломники и путники отдыхали в каменных стенах: тут спасались от непогоды и разбойников. Историки спорят, не был ли он раньше монастырём.",
+  "visitkyrgyzstan.org, orexca.com, en.wikipedia.org"
+ ]
+};
+const mv = document.getElementById("mv"), chat = document.getElementById("chat");
+mv.addEventListener("error", () => { document.getElementById("load").textContent = "Модель не загрузилась — обновите страницу"; });
+const bNow = document.getElementById("v-now"), bLife = document.getElementById("v-life");
 function view(life) {
   mv.src = life ? "tash-rabat-karavan.glb" : "tash-rabat.glb";
   mv.cameraOrbit = life ? "80deg 66deg 70m" : "70deg 74deg 80m";
   mv.cameraTarget = life ? "16m 2m 0m" : "auto auto auto";
   mv.maxCameraOrbit = life ? "auto 88deg 260m" : "auto 88deg 200m";
   bLife.setAttribute("aria-pressed", life); bNow.setAttribute("aria-pressed", !life);
-  document.getElementById("note-life").hidden = !life; document.getElementById("note-now").hidden = life;
+  document.getElementById("note-1").hidden = !life; document.getElementById("note-0").hidden = life;
 }
 bNow.onclick = () => view(false); bLife.onclick = () => view(true);
 if (location.hash === "#life") view(true);
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c])); }
+function bubble(cls, h) { const d = document.createElement("div"); d.className = "b " + cls; d.innerHTML = h; chat.appendChild(d); return d; }
+document.getElementById("asks").addEventListener("click", e => {
+  const k = e.target.dataset && e.target.dataset.q; if (!k) return;
+  const [q, a, s] = A[k]; e.target.disabled = true;
+  bubble("u", esc(q));
+  const t = bubble("g", '<span class="who">ГИД</span>…');
+  setTimeout(() => { t.innerHTML = '<span class="who">ГИД</span>' + esc(a) + '<span class="src">Источник: ' + esc(s) + '</span>'; }, 450);
+});
+document.getElementById("mic").onclick = () => bubble("g", '<span class="who">ГИД</span>Голосом можно будет спрашивать в рабочей версии. Пока выберите вопрос выше.');
+for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = () => bubble("g", '<span class="who">ГИД</span>Кыргызча жана English — в рабочей версии. Тексты сейчас переводим и проверяем.');
 </script>
-</body>
 </html>

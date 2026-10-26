@@ -51,12 +51,20 @@ model-viewer{width:100%;height:min(62vh,460px);display:block;--poster-color:tran
 .mic{width:50px;height:50px;border-radius:50%;border:0;background:var(--clay);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(181,83,44,.35);flex:none}
 h2{font:700 15px var(--display);margin:6px 0 0;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
 .places{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
-.place{flex:none;padding:9px 13px;border-radius:14px;border:1px solid var(--line);background:var(--paper);font-size:14px}
+.place{flex:none;padding:9px 13px;border-radius:14px;border:1px solid var(--line);background:var(--paper);font-size:14px;color:var(--ink);text-decoration:none}
 .place.on{border-color:var(--clay);color:var(--clay);font-weight:700}
 .place small{display:block;color:var(--muted);font-size:11.5px;font-weight:400}
 .demo{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
 button:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+/* компьютер: модель слева на всю высоту, текст и гид справа (как на других страницах мест) */
+@media (min-width:900px){
+  .app{max-width:1240px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,1fr);column-gap:28px;row-gap:14px;align-items:start}
+  .app>*{grid-column:2}
+  .app>.top{grid-column:1 / -1}
+  .app>.stage{grid-column:1;grid-row:2 / span 20;position:sticky;top:14px}
+  .stage model-viewer{height:calc(100vh - 90px)}
+}
 </style>
 
 <div class="app">
@@ -111,9 +119,10 @@ button:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
 
   <h2>Другие места</h2>
   <div class="places">
-    <div class="place on">Бурана<small>готово</small></div>
-    <div class="place">Таш-Рабат<small>скоро</small></div>
-    <div class="place">Сулайман-Тоо<small>скоро</small></div>
+    <a class="place on" aria-current="page" href="burana.html">Бурана<small>Чуйская обл.</small></a>
+    <a class="place" href="tash-rabat.html">Таш-Рабат<small>Нарынская обл.</small></a>
+    <a class="place" href="kel-suu.html">Кель-Суу<small>Нарынская обл.</small></a>
+    <a class="place" href="sulaiman-too.html">Сулайман-Тоо<small>Ош</small></a>
   </div>
 
   <div class="demo">Демо для конкурса «100 идей для Кыргызстана». Ответы гида пока заготовлены заранее, в рабочей версии гид — нейросеть, говорит голосом на кыргызском, русском и английском. Модель построена по фото и справочным размерам; источники размеров расходятся.</div>
