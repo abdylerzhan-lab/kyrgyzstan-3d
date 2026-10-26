@@ -213,7 +213,8 @@ for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = (
 (async () => {
   const d = await (await fetch("media/places.json")).json();
   const SHORT = {"burana": "Бурана", "kel-suu": "Кель-Суу", "tash-rabat": "Таш-Рабат", "karakol": "Храм Троицы", "sulaiman-too": "Сулайман-Тоо"};
-  PLACES = d.places.map(p => Object.assign({short: SHORT[p.id] || p.name_ru}, p,
+  const HIDDEN = ["karakol"];   // убраны с карты по просьбе Эржана 26.10 (данные и фото в media/ остаются)
+  PLACES = d.places.filter(p => !HIDDEN.includes(p.id)).map(p => Object.assign({short: SHORT[p.id] || p.name_ru}, p,
     p.id === "burana" ? {model: "burana-now.glb", page: "burana.html", orbit: "35deg 78deg 62m"} :
     p.id === "kel-suu" ? {model: "kel-suu.glb", orbit: "15deg 52deg 19000m", page: "kel-suu.html",
       note3d: "Макет 14 × 14 км по спутниковым высотам и снимку Sentinel-2. Горы по высоте усилены в 1,3 раза, чтобы лучше читались."} :
