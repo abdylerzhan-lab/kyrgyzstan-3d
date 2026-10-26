@@ -17,7 +17,12 @@ body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);display:
 .back{font:800 15px var(--display);letter-spacing:.06em;color:var(--clay);text-decoration:none}
 h1{font:800 30px/1.05 var(--display);margin:8px 0 2px}
 .meta{color:var(--muted);font-size:14px}
-model-viewer{flex:1;width:100%;min-height:0;background:linear-gradient(#d7e7f1 0%,#eef4f6 100%)}
+.stage{flex:1;position:relative;min-height:0}
+model-viewer{position:absolute;inset:0;width:100%;height:100%;background:linear-gradient(#d7e7f1 0%,#eef4f6 100%)}
+.tog{position:absolute;top:12px;left:max(12px,env(safe-area-inset-left,0px));display:flex;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:rgba(255,253,248,.92);z-index:2}
+.tog button{font:700 13px var(--body);padding:7px 13px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.tog button[aria-pressed="true"]{background:var(--clay);color:#fff}
+button:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
 .note{font-size:12.5px;color:var(--muted);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 </style>
 </head>
@@ -27,9 +32,29 @@ model-viewer{flex:1;width:100%;min-height:0;background:linear-gradient(#d7e7f1 0
   <h1>Караван-сарай Таш-Рабат</h1>
   <div class="meta">Нарынская область · Великий шёлковый путь</div>
 </div>
-<model-viewer src="tash-rabat.glb" alt="3D-модель караван-сарая Таш-Рабат" camera-controls touch-action="none" auto-rotate auto-rotate-delay="3000"
+<div class="stage">
+<model-viewer id="mv" src="tash-rabat.glb" alt="3D-модель караван-сарая Таш-Рабат" camera-controls touch-action="none" auto-rotate auto-rotate-delay="3000"
   rotation-per-second="10deg" camera-orbit="70deg 74deg 80m" min-camera-orbit="auto 0deg 25m" max-camera-orbit="auto 88deg 200m"
   field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none"></model-viewer>
-<div class="note">Модель приблизительная: восточный и западный фасады 32,4 м и центральный зал 9,1 × 9,26 м — по обмерам (informer.kg), длина ~35,7 м — по туристическим сайтам; высоты, башни, портал и купол — по фото Wikimedia Commons. Крутите одним пальцем, приближайте двумя.</div>
+<div class="tog" role="group" aria-label="Вид">
+  <button id="v-now" type="button" aria-pressed="true">Сейчас</button>
+  <button id="v-life" type="button" aria-pressed="false">Жизнь караван-сарая</button>
+</div>
+</div>
+<div class="note" id="note-now">Модель приблизительная: восточный и западный фасады 32,4 м и центральный зал 9,1 × 9,26 м — по обмерам (informer.kg), длина ~35,7 м — по туристическим сайтам; высоты, башни, портал и купол — по фото Wikimedia Commons. Крутите одним пальцем, приближайте двумя.</div>
+<div class="note" id="note-life" hidden>Иллюстрация, а не реконструкция: так могла выглядеть стоянка каравана на Шёлковом пути — двугорбые верблюды, путники у костра, юрты кочевников. Здание то же, что в виде «Сейчас». Крутите одним пальцем, приближайте двумя.</div>
+<script>
+const mv = document.getElementById("mv"), bNow = document.getElementById("v-now"), bLife = document.getElementById("v-life");
+function view(life) {
+  mv.src = life ? "tash-rabat-karavan.glb" : "tash-rabat.glb";
+  mv.cameraOrbit = life ? "80deg 66deg 70m" : "70deg 74deg 80m";
+  mv.cameraTarget = life ? "16m 2m 0m" : "auto auto auto";
+  mv.maxCameraOrbit = life ? "auto 88deg 260m" : "auto 88deg 200m";
+  bLife.setAttribute("aria-pressed", life); bNow.setAttribute("aria-pressed", !life);
+  document.getElementById("note-life").hidden = !life; document.getElementById("note-now").hidden = life;
+}
+bNow.onclick = () => view(false); bLife.onclick = () => view(true);
+if (location.hash === "#life") view(true);
+</script>
 </body>
 </html>

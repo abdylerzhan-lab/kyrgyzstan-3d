@@ -202,7 +202,7 @@ function tab(name) {
   } else {
     body.innerHTML = '<model-viewer src="' + esc(p.model) + '" camera-controls auto-rotate touch-action="pan-y" camera-orbit="' + esc(p.orbit) + '" field-of-view="30deg" shadow-intensity="1" interaction-prompt="none" alt="3D-модель"></model-viewer>' +
       (p.note3d ? '<div class="region">' + esc(p.note3d) + '</div>' : '') +
-      (p.page ? '<a class="more" href="' + esc(p.page) + '">' + (p.id === 'burana' ? 'Открыть 3D на весь экран: «сейчас» и «каким был» →' : 'Открыть 3D на весь экран →') + '</a>' : '');
+      (p.page ? '<a class="more" href="' + esc(p.page) + '">' + (p.id === 'burana' ? 'Открыть 3D на весь экран: «сейчас» и «каким был» →' : p.id === 'tash-rabat' ? 'Открыть 3D на весь экран: «сейчас» и «жизнь караван-сарая» →' : 'Открыть 3D на весь экран →') + '</a>' : '');
   }
 }
 for (const b of document.querySelectorAll(".tabs button")) b.onclick = () => tab(b.dataset.tab);
