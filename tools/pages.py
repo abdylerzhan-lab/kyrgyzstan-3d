@@ -7,7 +7,7 @@ GUIDE = json.load(open(os.path.join(ROOT, "media", "guide.json"), encoding="utf-
 
 # все страницы мест — для блока «Другие места»
 PLACES = [("burana.html", "Бурана", "Чуйская обл."), ("tash-rabat.html", "Таш-Рабат", "Нарынская обл."),
-          ("kel-suu.html", "Кель-Суу", "Нарынская обл."), ("sulaiman-too.html", "Сулайман-Тоо", "Ош")]
+          ("kel-suu.html", "Кель-Суу", "Нарынская обл."), ("kol-kogur.html", "Кёль-Когур", "Чуйская обл."), ("sulaiman-too.html", "Сулайман-Тоо", "Ош")]
 
 # стиль один на все страницы мест; на компьютере — модель слева, гид справа
 CSS = """
@@ -101,6 +101,11 @@ PAGES = {
         model='<model-viewer id="mv" src="kel-suu.glb" alt="3D-макет озера Кель-Суу" camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000" rotation-per-second="10deg" camera-orbit="15deg 52deg 19000m" min-camera-orbit="auto 0deg 4000m" max-camera-orbit="auto 85deg 40000m" field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">',
         facts=[("3514 м", "над уровнем моря"), ("4,5 км²", "площадь озера (en.wikipedia)"), ("июнь–окт.", "сезон поездок")],
         notes=["Макет 14 × 14 км: высоты — AWS Terrain Tiles, снимок — Sentinel-2 cloudless (s2maps.eu, EOX). Горы по высоте усилены в 1,3 раза."]),
+    "kol-kogur": dict(
+        title="Озеро Кёль-Когур", meta="Чуйская область · парк «Чон-Кемин»",
+        model='<model-viewer id="mv" src="kol-kogur.glb" alt="3D-макет озера Кёль-Когур" camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000" rotation-per-second="10deg" camera-orbit="20deg 55deg 7600m" min-camera-orbit="auto 0deg 1200m" max-camera-orbit="auto 85deg 12000m" field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">',
+        facts=[("~2460 м", "над уровнем моря (источники расходятся)"), ("~650 × 470 м", "размер озера по OpenStreetMap"), ("пешком", "или верхом: дороги к озеру нет")],
+        notes=["Макет 4 × 4 км: высоты — AWS Terrain Tiles, снимок — Sentinel-2 cloudless (s2maps.eu, EOX), контур озера — © участники OpenStreetMap (ODbL). Горы по высоте усилены в 1,3 раза."]),
     "sulaiman-too": dict(
         title="Гора Сулайман-Тоо", meta="Город Ош · Всемирное наследие ЮНЕСКО",
         model='<model-viewer id="mv" src="sulaiman-too.glb" alt="3D-макет горы Сулайман-Тоо" camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000" rotation-per-second="10deg" camera-orbit="10deg 60deg 2100m" camera-target="150m 90m 0m" min-camera-orbit="auto 0deg 500m" max-camera-orbit="auto 85deg 6000m" field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">\n'

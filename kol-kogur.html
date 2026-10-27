@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Озеро Кёль-Когур — Кыргызстан 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=PT+Sans:wght@400;700&display=swap">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+/* Тёплый шёлк, как страница Бураны. Собрано tools/pages.py — правки вносить туда. */
+:root{
+  --sand:#f8f3ea; --paper:#fffdf8; --ink:#2b2118; --muted:#86715d; --line:#e8dccb;
+  --clay:#b5532c; --clay-ink:#ffffff; --sky:#d7e7f1; --steppe:#e6d4b3;
+  --display:"Rubik","Segoe UI",Arial,sans-serif; --body:"PT Sans","Segoe UI",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--sand);color:var(--ink);font:16px/1.45 var(--body);margin:0}
+.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 28px;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font:800 18px/1 var(--display);letter-spacing:.06em;color:var(--clay);text-decoration:none}
+.langs{display:flex;gap:4px}
+.langs button{font:700 12px var(--body);padding:5px 10px;border-radius:20px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--clay);border-color:var(--clay);color:var(--clay-ink)}
+h1{font:800 clamp(28px,8vw,36px)/1.05 var(--display);margin:0;text-wrap:balance}
+.meta{color:var(--muted);font-size:14px;margin-top:4px}
+.stage{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(var(--sky) 0%,#eef4f6 100%)}
+model-viewer{width:100%;height:min(62vh,460px);display:block;--poster-color:transparent;background:transparent}
+.tog{position:absolute;top:12px;left:12px;display:flex;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:rgba(255,253,248,.92)}
+.tog button{font:700 13px var(--body);padding:7px 13px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.tog button[aria-pressed="true"]{background:var(--clay);color:var(--clay-ink)}
+.chip360{position:absolute;top:12px;right:12px;font:700 12px var(--body);padding:6px 11px;border-radius:20px;background:rgba(255,253,248,.92);border:1px solid var(--line)}
+.note{font-size:12.5px;line-height:1.35;color:var(--muted)}
+.load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);pointer-events:none}
+.hs{background:none;border:0;padding:0;display:block;transform:translateY(-50%)}
+.hs::before{content:"";display:block;width:10px;height:10px;margin:0 auto;border-radius:50%;background:var(--clay);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.hs span{display:block;margin-top:3px;padding:2px 7px;border-radius:9px;background:rgba(255,253,248,.92);color:var(--ink);font:700 11.5px/1.2 var(--body);white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.hs.up{display:flex;flex-direction:column-reverse;transform:translateY(-88%)}
+.hs.up span{margin:0 0 3px}
+.hs[data-visible=false]{opacity:.25}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fact{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 10px 9px}
+.fact b{display:block;font:700 20px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.fact span{font-size:12px;color:var(--muted);line-height:1.25;display:block;margin-top:3px}
+.guide{display:flex;flex-direction:column;gap:9px}
+.b{padding:10px 13px;border-radius:18px;max-width:90%;font-size:15px}
+.g{background:var(--paper);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.g .who{display:block;font:700 11px var(--body);letter-spacing:.08em;color:var(--clay);margin-bottom:3px}
+.g .src{display:block;font-size:11.5px;color:var(--muted);margin-top:5px}
+.u{background:var(--clay);color:var(--clay-ink);align-self:flex-end;border-bottom-right-radius:6px}
+.asks{display:flex;flex-wrap:wrap;gap:7px}
+.asks button{font:15px var(--body);padding:8px 13px;border-radius:20px;border:1px solid var(--clay);background:var(--paper);color:var(--clay);cursor:pointer}
+.asks button:disabled{opacity:.45;cursor:default}
+.bar{display:flex;gap:10px;align-items:center}
+.inp{flex:1;min-width:0;height:46px;border-radius:23px;border:1px solid var(--line);background:var(--paper);display:flex;align-items:center;padding:0 16px;font-size:14px;color:var(--muted)}
+.mic{width:50px;height:50px;border-radius:50%;border:0;background:var(--clay);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(181,83,44,.35);flex:none}
+h2{font:700 15px var(--display);margin:6px 0 0;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.places{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.place{flex:none;padding:9px 13px;border-radius:14px;border:1px solid var(--line);background:var(--paper);font-size:14px;color:var(--ink);text-decoration:none}
+.place.on{border-color:var(--clay);color:var(--clay);font-weight:700}
+.place small{display:block;color:var(--muted);font-size:11.5px;font-weight:400}
+.demo{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
+/* компьютер: модель слева на всю высоту, текст и гид справа */
+@media (min-width:900px){
+  .app{max-width:1240px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,1fr);column-gap:28px;row-gap:14px;align-items:start}
+  .app>*{grid-column:2}
+  .app>.top{grid-column:1 / -1}
+  .app>.stage{grid-column:1;grid-row:2 / span 20;position:sticky;top:14px}
+  .stage model-viewer{height:calc(100vh - 90px)}
+}
+</style>
+
+<div class="app">
+  <div class="top">
+    <a class="brand" href="index.html">← КАРТА</a>
+    <div class="langs" role="group" aria-label="Язык">
+      <button id="lang-kg" type="button" aria-pressed="false">KG</button>
+      <button id="lang-ru" type="button" aria-pressed="true">RU</button>
+      <button id="lang-en" type="button" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div>
+    <h1>Озеро Кёль-Когур</h1>
+    <div class="meta">Чуйская область · парк «Чон-Кемин»</div>
+  </div>
+
+  <div class="stage">
+    <model-viewer id="mv" src="kol-kogur.glb" alt="3D-макет озера Кёль-Когур" camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="3000" rotation-per-second="10deg" camera-orbit="20deg 55deg 7600m" min-camera-orbit="auto 0deg 1200m" max-camera-orbit="auto 85deg 12000m" field-of-view="30deg" shadow-intensity="1" exposure="1.05" interaction-prompt="none">
+      <div slot="poster" class="load" id="load">Загружаю модель…</div>
+    </model-viewer>
+    <div class="chip360">↻ 360°</div>
+  </div>
+
+  <div class="note" id="note-0">Макет 4 × 4 км: высоты — AWS Terrain Tiles, снимок — Sentinel-2 cloudless (s2maps.eu, EOX), контур озера — © участники OpenStreetMap (ODbL). Горы по высоте усилены в 1,3 раза. Крутите пальцем, приближайте двумя.</div>
+
+  <div class="facts">
+    <div class="fact"><b>~2460 м</b><span>над уровнем моря (источники расходятся)</span></div>
+    <div class="fact"><b>~650 × 470 м</b><span>размер озера по OpenStreetMap</span></div>
+    <div class="fact"><b>пешком</b><span>или верхом: дороги к озеру нет</span></div>
+  </div>
+
+  <div class="guide" id="chat" aria-live="polite">
+    <div class="b g"><span class="who">ГИД</span>Салам! Я твой гид по озеру Кёль-Когур. Оно спрятано в лесистых горах парка «Чон-Кемин» — спрашивай, что хочешь узнать.</div>
+  </div>
+  <div class="asks" id="asks">
+    <button type="button" data-q="road">Как доехать?</button>
+    <button type="button" data-q="when">Когда лучше ехать?</button>
+    <button type="button" data-q="where">Где оно находится?</button>
+    <button type="button" data-q="around">Что вокруг озера?</button>
+    <button type="button" data-q="name">Как пишется название?</button>
+  </div>
+  <div class="bar">
+    <div class="inp">Спросите гида…</div>
+    <button class="mic" id="mic" type="button" aria-label="Спросить голосом"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="#fff"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="#fff" stroke-width="2" fill="none"/></svg></button>
+  </div>
+
+  <h2>Другие места</h2>
+  <div class="places">
+    <a class="place" href="burana.html">Бурана<small>Чуйская обл.</small></a>
+    <a class="place" href="tash-rabat.html">Таш-Рабат<small>Нарынская обл.</small></a>
+    <a class="place" href="kel-suu.html">Кель-Суу<small>Нарынская обл.</small></a>
+    <a class="place on" aria-current="page" href="kol-kogur.html">Кёль-Когур<small>Чуйская обл.</small></a>
+    <a class="place" href="sulaiman-too.html">Сулайман-Тоо<small>Ош</small></a>
+  </div>
+
+  <div class="demo">Демо для конкурса «100 идей для Кыргызстана». Ответы гида пока заготовлены заранее и проверены по источникам, в рабочей версии гид — нейросеть, говорит голосом на кыргызском, русском и английском.</div>
+</div>
+
+<script>
+const A = {
+ "road": [
+  "Как доехать?",
+  "Автомобильной дороги к озеру нет, только пешком или верхом. Идут от долины реки Чон-Кемин (примерно день пути) или от села Тамчи на берегу Иссык-Куля (около двух дней). Время указано по одному источнику, уточняйте у местных проводников.",
+  "nomadsland.travel; trvlland.com"
+ ],
+ "when": [
+  "Когда лучше ехать?",
+  "Источники не называют лучшее время. Озеро лежит примерно на 2,5 км над морем, поэтому в горах быстро холодает. Фото на Викискладе сделано в начале октября 2024.",
+  "Wikimedia Commons; nomadsland.travel"
+ ],
+ "where": [
+  "Где оно находится?",
+  "В Чуйской области, в Кеминском районе, на территории парка «Чон-Кемин», среди хребта Кюнгёй Ала-Тоо. Высота по nomadsland.travel 2468 м, по trvlland.com около 2 км, так что источники расходятся.",
+  "central-asia.live; nomadsland.travel; trvlland.com"
+ ],
+ "around": [
+  "Что вокруг озера?",
+  "На одном берегу густой ельник, на другом горный склон с тем же названием. Вокруг хвойные леса и малолюдные горы. Рядом, примерно в 5 км выше, перевал Кёль-Тор.",
+  "central-asia.live; trvlland.com; nomadsland.travel"
+ ],
+ "name": [
+  "Как пишется название?",
+  "По-русски встречаются «Кёль-Когур», «Кель-Когур» и «Кёль-Кёгур». Кыргызское написание на карте OpenStreetMap — Көл-Когур. Что оно означает, источники не объясняют.",
+  "Wikimedia Commons; OpenStreetMap; nomadsland.travel"
+ ]
+};
+const mv = document.getElementById("mv"), chat = document.getElementById("chat");
+mv.addEventListener("error", () => { document.getElementById("load").textContent = "Модель не загрузилась — обновите страницу"; });
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c])); }
+function bubble(cls, h) { const d = document.createElement("div"); d.className = "b " + cls; d.innerHTML = h; chat.appendChild(d); return d; }
+document.getElementById("asks").addEventListener("click", e => {
+  const k = e.target.dataset && e.target.dataset.q; if (!k) return;
+  const [q, a, s] = A[k]; e.target.disabled = true;
+  bubble("u", esc(q));
+  const t = bubble("g", '<span class="who">ГИД</span>…');
+  setTimeout(() => { t.innerHTML = '<span class="who">ГИД</span>' + esc(a) + '<span class="src">Источник: ' + esc(s) + '</span>'; }, 450);
+});
+document.getElementById("mic").onclick = () => bubble("g", '<span class="who">ГИД</span>Голосом можно будет спрашивать в рабочей версии. Пока выберите вопрос выше.');
+for (const id of ["lang-kg", "lang-en"]) document.getElementById(id).onclick = () => bubble("g", '<span class="who">ГИД</span>Кыргызча жана English — в рабочей версии. Тексты сейчас переводим и проверяем.');
+</script>
+</html>
